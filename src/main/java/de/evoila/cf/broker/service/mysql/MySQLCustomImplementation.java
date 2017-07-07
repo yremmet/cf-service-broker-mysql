@@ -30,26 +30,6 @@ import de.evoila.cf.cpi.existing.CustomExistingServiceConnection;
 @Service
 public class MySQLCustomImplementation implements CustomExistingService {
 
-	// public void initServiceInstance(ServiceInstance serviceInstance, String[]
-	// databases) throws SQLException {
-	// String serviceInstanceId = serviceInstance.getId();
-	// if (!jdbcService.isConnected()) {
-	// ServerAddress host = serviceInstance.getHosts().get(0);
-	// jdbcService.createConnection(serviceInstanceId, host.getIp(),
-	// host.getPort());
-	// }
-	// jdbcService.executeUpdate("CREATE ROLE \"" + serviceInstanceId + "\"");
-	// for (String database : databases) {
-	// jdbcService.executeUpdate("CREATE DATABASE \"" + database + "\" OWNER \""
-	// + serviceInstanceId + "\"");
-	// }
-	// }
-	//
-	// public void deleteRole(String instanceId) throws SQLException {
-	// jdbcService.checkValidUUID(instanceId);
-	// jdbcService.executeUpdate("DROP ROLE IF EXISTS \"" + instanceId + "\"");
-	// }
-	
 	@Autowired
 	private ServiceDefinitionRepository serviceDefinitionRepository;
 	
@@ -90,14 +70,16 @@ public class MySQLCustomImplementation implements CustomExistingService {
 			Assert.notNull(host.getPort(), "Port of ServiceInstance may not be null");
 			
 			String password = instanceId;
+			String username = instanceId;
 			String planId = serviceInstance.getPlanId();
 			Plan plan = serviceDefinitionRepository.getPlan(planId);
 			if(plan.getPlatform() == Platform.EXISTING_SERVICE) {
 				password = existingServiceFactory.getPassword();
+				username = existingServiceFactory.getUsername();
 			}
-	
+			
 			final boolean isConnected = jdbcService.createConnection(host.getIp(),
-					host.getPort(), instanceId, existingServiceFactory.getUsername(), password);
+					host.getPort(), instanceId, username, password);
 			if (isConnected)
 				return jdbcService;
 			else
