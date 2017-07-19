@@ -6,9 +6,10 @@ package de.evoila.cf.broker.service.custom;
 import java.sql.SQLException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Service;
 
+import de.evoila.cf.broker.bean.ExistingEndpointBean;
 import de.evoila.cf.broker.exception.PlatformException;
 import de.evoila.cf.broker.service.mysql.MySQLCustomImplementation;
 import de.evoila.cf.broker.service.mysql.jdbc.MySQLDbService;
@@ -21,7 +22,7 @@ import de.evoila.cf.cpi.existing.ExistingServiceFactory;
  *
  */
 @Service
-@ConditionalOnProperty(prefix="existing.endpoint", name={"hosts","port","username","password","database"},havingValue="")
+@ConditionalOnBean(ExistingEndpointBean.class)
 public class MySQLExistingServiceFactory extends ExistingServiceFactory {
 	
 	@Autowired
